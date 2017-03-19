@@ -1,0 +1,29 @@
+    {% for post in posts %}
+<div class="trip">
+			 <div class="col-md-4 trip-left"> 
+			   	<img src="{{url_for('static',filename=post.img_url)}}"  >
+			   </div>
+			   <div class="col-md-8 trip-right">
+			   <div>
+			     <h3><a href="{{url_for('main.post',id=post.id)}}">{{post.title}}</a></h3>
+			   </div>
+			   	<div>
+			   	<p>
+			   	{% if post.body_html %}
+                    {{ post.body | safe }}
+                {% else %}
+                    {{ post.body }}
+                {% endif %}
+			   	</p>
+			   	<div style="float: left;bottom: 1.5em;position:absolute;}">
+                 <a href="{{ url_for('.user', username=post.author.username) }}">
+                    <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=30) }}">
+                 </a>       
+                 <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>
+                 <h6 style="float: right;margin-left: 2em;color: #666666;">评论:({{post.comments.count()}})</h6>
+			   	</div>
+			   	
+            </div>
+			<div class="clearfix"> </div>
+</div>	
+    {% endfor %}

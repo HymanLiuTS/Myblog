@@ -1,0 +1,32 @@
+﻿
+{% if posts != None%}
+{% for post in posts %}
+ <article class="excerpt excerpt-1" style="">
+  <a class="focus" href="{{url_for('main.post',id=post.id)}}" title="{{ post.title }}" target="_blank" ><img class="thumb" data-original="{{url_for('static',filename=post.img_url)}}" src="{{url_for('static',filename=post.img_url)}}" alt="{{post.title}}"  style="display: inline;"></a>
+		<header><a class="cat" href="#" title="{{ post.group}}" >{{ post.group}}<i></i></a>
+			<h2><a href="{{url_for('main.post',id=post.id)}}" title="{{ post.title }}" target="_blank" >{{ post.title }}</a>
+			</h2>
+		</header>
+		<p class="meta">
+       {{ moment.include_moment()}}  
+			 <a><img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=20)}}"></a><a  style="margin-right:1em;" href="#" rel="nofollow" target="_blank">  {{post.author.username}}</a>
+			<time class="time"><i class="glyphicon glyphicon-time"></i> {{moment(post.timestamp).format('YYYY-MM-DD')}}</time>
+			<span class="views"><i class="glyphicon glyphicon-eye-open"></i> {{post.read_cnt}}</span> <a class="comment" href="##comment" title="评论" target="_blank" ><i class="glyphicon glyphicon-comment"></i>{{post.comments.count()}}</a>
+		</p>
+		<p class="note">{{ post.body[0:150]|safe }}...</p>
+	</article>
+  {% endfor %}
+  <nav class="pagination" style="display: none;">
+	<ul>
+	  <li class="prev-page"></li>
+	  <li class="active"><span>1</span></li>
+	  <li><a href="?page=2">2</a></li>
+	  {% if pagination.has_next %}
+	  <li class="next-page"><a href="?page={{pagination.next_num}}">下一页</a></li>
+	  {% endif %}
+	  <li><span>共 2 页</span></li>
+	</ul>
+  </nav>
+  {% else %}
+  <div>少侠请移步，此处暂时还未更新文章~</div>  
+  {%endif%}

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{post.title}}</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/static/css/nprogress.css">
+<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+<link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
+<link rel="apple-touch-icon-precomposed" href="/static/images/icon.png">
+<link rel="shortcut icon" href="/static/images/favicon.ico">
+<script src="/static/ueditor/ueditor.parse.js"></script>
+<script src="/static/js/jquery-2.1.4.min.js"></script>
+<script src="/static/js/jquery.lazyload.min.js"></script>
+<script>
+	function delConfirm()
+	{
+		var r = confirm("确定删除该文章？");
+		return r;
+	}
+	function logUserCommentSubmit()
+	{
+		var comment=document.getElementById('comment-textarea').value;
+                         if(comment=='')
+                         {
+                            alert('评论内容不能为空！');
+                            return false;
+                         }   
+	}
+	function strangerCommentSubmit()
+	{
+		var comment=document.getElementById('name-textarea').value;
+                         if(comment=='')
+                         {
+                            alert('昵称不能为空！');
+                            return false;
+                         }   
+    var stranger_name=document.getElementById('comment-textarea').value;
+                         if(stranger_name=='')
+                         {
+                            alert('评论内容不能为空！');
+                            return false;
+                         }   
+	}
+</script>
+{% include '_counts.html' %}
+</head>
+<body class="single">
+<header class="header">
+<nav class="navbar navbar-default">
+{% include '_header.html' %}
+</nav>
+</header>
+<section class="container">
+<div class="content-wrap">
+<div class="content">
+  <header class="article-header">
+	<h1 class="article-title"><a href="{{url_for('main.post',id=post.id)}}" title="{{post.title}}" >{{post.title}}</a></h1>
+	<div class="article-meta"> <span class="item article-meta-time">
+		<time class="time" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="发表时间：{{post.timestamp.strftime("%Y-%m-%d %H:%M:%S")}}"><i class="glyphicon glyphicon-time"></i> 
+			{{ moment.include_moment()}}  
+		  {{ moment.lang('ch')}}  
+			{{moment(post.timestamp).format('YYYY-MM-DD HH:mm:ss')}}
+			</time></span>
+	  <span class="item article-meta-source" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="作者：{{post.author.username}}"><i class="glyphicon glyphicon-user"></i> {{post.author.username}}</span> 
+	  <span class="item article-meta-category" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{post.group}}"><i class="glyphicon glyphicon-list"></i> <a href="#" title="{{post.group}}" >{{post.group}}</a></span> 
+	  <span class="item article-meta-views" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="浏览量：{{post.read_cnt}}"><i class="glyphicon glyphicon-eye-open"></i> {{post.read_cnt}}</span> <span class="item article-meta-comment" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="评论量"><i class="glyphicon glyphicon-comment"></i> {{post.comments.count()}}</span> 
+	   
+	   {% if current_user.is_administrator() %}
+	   <a style="float:right;margin-left:1em;" href="{{ url_for('main.recommand_post',id=post.id)}}">
+	   	{% if post.recommend == 1%}
+	   	<span class="glyphicon glyphicon-star"></span>
+	   	{% else %}
+	   	<span class="glyphicon glyphicon-star-empty"></span>
+	   	{% endif %}
+	   	推荐</a>
+	  {% endif %}
+	  {% if current_user.is_administrator() or current_user == post.author%}
+	  <a style="float:right;margin-left:1em;" href="{{ url_for('main.delete',id=post.id)}}" onclick="return delConfirm()" >删除</a>
+	  <a style="float:right;margin-left:1em;" href="{{ url_for('main.edit',id=post.id)}}">编辑</a>
+	  {% endif %}
+	 </div>
+  </header>
+  <article class="article-content">
+	<p><img data-original="{{ url_for('static',filename=post.img_url)}}" src="{{ url_for('static',filename=post.img_url)}}" alt="" /></p>
+	<p>
+		 {% if post.body_html %}
+     	  {{ post.body_html | safe }}
+     	  {% else %}
+        {{ post.body }}
+     {% endif %}        
+	</p>
+	<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a></div>
+
+		  <script>                  window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "32" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=0.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+  </article>
+  
+	<div class="article-tags">标签：<a rel="tag" >{{post.tag}}</a>
+	</div>
+  <div class="relates">
+	<div class="title">
+	  <h3>相关推荐</h3>
+	</div>
+	<ul>
+	   {% for post2 in recmomend_posts%}
+		 <li><a href="{{url_for('main.post',id=post2.id)}}" title="{{url_for('main.post',id=post2.id)}}" >{{post2.title}}</a></li>
+		{% endfor %}
+	</ul>
+  </div>
+  <div class="title" id="comment">
+	<h3>评论</h3>
+  </div>
+  <div id="respond">
+  	{% if current_user.is_authenticated %}
+		<form id="comment-form" name="comment-form" action="{{url_for('.post',id=post.id)}}" method="POST" onsubmit="return logUserCommentSubmit()">
+			<div class="comment">
+				<div class="comment-box">
+					<textarea placeholder="您的评论或留言" name="comment-textarea" id="comment-textarea" cols="100%" rows="3" tabindex="3"></textarea>
+					<div class="comment-ctrl">
+						<div class="comment-prompt" style="display: none;"> <i class="fa fa-spin fa-circle-o-notch"></i> <span class="comment-prompt-text">评论正在提交中...请稍后</span> </div>
+						<div class="comment-success" style="display: none;"> <i class="fa fa-check"></i> <span class="comment-prompt-text">评论提交成功...</span> </div>
+						<button type="submit" name="comment-submit" id="comment-submit" tabindex="4">评论</button>
+					</div>
+				</div>
+			</div>
+		</form>
+		{% else %}
+		<form id="comment-form" name="comment-form" action="{{url_for('.post',id=post.id)}}" method="POST" onsubmit="return strangerCommentSubmit()">
+			<div class="comment">
+				<input name="name-textarea" id="name-textarea" class="form-control" size="22" placeholder="您的昵称（必填）" maxlength="15" autocomplete="off" tabindex="1" type="text">
+				<input name="mail-textarea" id="mail-textarea" class="form-control" size="22" placeholder="您的网址或邮箱（非必填）" maxlength="58" autocomplete="off" tabindex="2" type="text" style="display:None">
+				<div class="comment-box">
+					<textarea placeholder="您的评论或留言（必填）" name="comment-textarea" id="comment-textarea" cols="100%" rows="3" tabindex="3"></textarea>
+					<div class="comment-ctrl">
+						<div class="comment-prompt" style="display: none;"> <i class="fa fa-spin fa-circle-o-notch"></i> <span class="comment-prompt-text">评论正在提交中...请稍后</span> </div>
+						<div class="comment-success" style="display: none;"> <i class="fa fa-check"></i> <span class="comment-prompt-text">评论提交成功...</span> </div>
+						<button type="submit" name="comment-submit" id="comment-submit" tabindex="4">评论</button>
+					</div>
+				</div>
+			</div>
+		</form>
+		{% endif %}
+	</div>
+  <div id="postcomments">
+	<ol id="comment_list" class="commentlist">  
+		{% for comment in comments %}        
+	<li class="comment-content"><span class="comment-f">#{{comment.floor_number}}</span><div class="comment-main"><p>
+		{% if current_user.is_administrator() == True %}
+		<a style="float:right;" href="{{url_for('main.delcomment',id=comment.id,post_id=post.id)}}">删除</a>
+		{% endif %}
+		{%if comment.author == None %}
+		<a><img class="img-rounded profile-thumbnail" width="25" height="25" src="{{ comment.stranger_img_url }}"></a>
+		{% else %}
+		<a><img class="img-rounded profile-thumbnail" width="25" height="25" src="{{ comment.author.gravatar(size=20) }}"></a>
+		{% endif %}
+		<a class="address" href="#" rel="nofollow" target="_blank">  
+			{%if comment.author == None %}
+			{{ comment.stranger_name }}
+			{% else %}
+			{{comment.author.username}}
+			{% endif %}
+		</a>
+		{{ moment.include_moment()}}  
+		{{ moment.lang('ch')}}  
+		<span class="time">{{moment(comment.timestamp).format('YYYY-MM-DD HH:mm:ss')}}</span>
+		<br>{{comment.body}}</p></div></li>
+		{% endfor %}
+  </div>
+ {% if pagination.total >0 %}
+  <div class="pagination">
+  	<ul class="pagination">
+	<li {% if not pagination.has_prev %} class="disabled"{% endif %}>
+		<a href="{% if pagination.has_prev %}{{ url_for('.post',id=post.id,
+			page=pagination.page-1)}}{% else %}#{% endif %}" >
+			&laquo
+		</a>		
+	</li>
+	{% for p in pagination.iter_pages() %}
+		{% if p %}
+			{% if p==pagination.page %}
+				<li class="active">
+					<a href="{{ url_for('.post',id=post.id,page=p)}}" style="cursor: pointer;">{{ p }}</a>
+				</li>
+			{% else %}
+				<li class="active">
+					<a href="{{ url_for('.post',id=post.id,page=p)}}" style="cursor: pointer;">{{ p }}</a>
+				</li>
+			{% endif %}
+		{% else %}
+		<li class="disabled"><a href="#">&hellip;</a></li>
+		{% endif %}
+	{% endfor %}
+	<li {% if not pagination.has_next %} class="disabled"{% endif %}>
+		<a href="{% if pagination.has_next %}{{ url_for('.post',id=post.id,
+			page=pagination.page+1)}}{% else %}#{% endif %}" >
+			&raquo
+		</a>		
+	</li>
+     </ul>
+  </div>
+  {% endif %}
+  </div>
+</div>
+
+<aside class="sidebar">
+<div class="fixed">
+  <div class="widget widget-tabs">
+	<ul class="nav nav-tabs" role="tablist">
+	  <li role="presentation" class="active"><a href="#notice" aria-controls="notice" role="tab" data-toggle="tab" >统计信息</a></li>
+	  <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab" >联系站长</a></li>
+	</ul>
+	<div class="tab-content">
+	  <div role="tabpanel" class="tab-pane contact active" id="notice">
+		  <h3>日志总数:
+			  {{ post_counts }} 篇
+		  </h3>
+	    <h3>网站运行:
+		  <span id="sitetime">{{days}} 天 </span></h3>
+		  <h3>访问量:
+		  <span>{{vistors}} 人次</span></h3>
+	  </div>
+		<div role="tabpanel" class="tab-pane contact" id="contact">
+		  <h3>Email: 
+			  <a href="mailto:hyman@codenest.cn" target="_blank" rel="nofollow" data-toggle="tooltip" data-placement="bottom" title=""  data-original-title="hyman@codenest.cn"> hyman@codenest.cn</a>
+		  </h3>
+		  	<h3>CSDN: 
+		  <a href="http://blog.csdn.net/hyman_c" style="font-size:0.8em;color:blue;text-decoration:underline;" target="_blank" data-toggle="tooltip" rel="nofollow" data-placement="bottom" title="http://blog.csdn.net/hyman_c"  data-original-title="#"> http://blog.csdn.net/hyman_c</a></h3>
+		  	 <h3>Github: 
+		  <a href="https://github.com/HymanLiuTS" style="font-size:0.8em;color:blue;text-decoration:underline;" target="_blank" data-toggle="tooltip" rel="nofollow" data-placement="bottom" title="https://github.com/HymanLiuTS"  data-original-title="#"> https://github.com/HymanLiuTS</a></h3>
+	  </div>
+	</div>
+  </div>
+  <div class="widget widget_search">
+	<form class="navbar-form" action="{{url_for('main.search')}}" method="GET">
+	  <div class="input-group">
+		<input type="text" name="q" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">
+		<span class="input-group-btn">
+		<button class="btn btn-default btn-search" name="search" type="submit">搜索</button>
+		</span> </div>
+	</form>
+  </div>
+</div>
+<div class="widget widget_hot">
+	 {% include '_hotarticles.html' %}
+</div>
+ <div>
+  {% include '_advert.html'%}
+</div>
+</aside>
+</section>
+<footer class="footer">
+<div class="container">
+<p>Copyright &copy; 2016.Company name All rights reserved.<a target="_blank" href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a></p>
+</div>
+<div id="gotop"><a class="gotop"></a></div>
+</footer>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/jquery.ias.js"></script>
+<script src="/static/js/scripts.js"></script>
+<script>
+	uParse('.article-content', {
+    rootPath:'/static/ueditor/'
+});
+</script>
+</body>
+</html>

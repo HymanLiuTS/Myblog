@@ -1,0 +1,12 @@
+﻿ <h3>最新评论文章</h3>
+	  <ul>  
+	  	{% for post in recent_comment_posts %}
+	  	{% if post != None %}
+	  	<li><a title="{{ post.title }}" href="#" ><span class="thumbnail">
+				<img class="thumb" data-original="{{url_for('static',filename=post.img_url)}}" src="{{url_for('static',filename=post.img_url)}}" alt="{{ post.title }}"  style="display: block;">
+			</span><span class="text">{{ post.title }}</span><span class="muted"><i class="glyphicon glyphicon-time"></i>
+				{{post.timestamp.strftime("%Y-%m-%d")}}
+			</span><span class="muted"><i class="glyphicon glyphicon-eye-open"></i>{{post.read_cnt}}</span></a></li>
+			{% endif %}
+	  	{% endfor %}          
+	  </ul>

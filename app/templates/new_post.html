@@ -1,0 +1,286 @@
+{% import "_macros.html" as macros %}
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>写文章</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/static/css/nprogress.css">
+<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+<link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
+<link rel="apple-touch-icon-precomposed" href="/static/images/icon.png">
+<link rel="shortcut icon" href="/static/images/favicon.ico">
+<script src="/static/js/jquery-2.1.4.min.js"></script>
+<script src="/static/js/nprogress.js"></script>
+<script src="/static/js/jquery.lazyload.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='ueditor/ueditor.config.js') }}"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='ueditor/ueditor.all.min.js') }}"> </script>
+    <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+    <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+    <script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='ueditor/lang/zh-cn/zh-cn.js') }}"></script>
+<script type="text/javascript">
+        //实例化编辑器
+        //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+        var ue = UE.getEditor('editor', {
+             serverUrl: "/upload/"
+        });
+        </script>
+<script type="text/javascript">
+
+    //实例化编辑器
+    //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+    var ue = UE.getEditor('editor', {
+		serverUrl: "/upload/"
+	});
+    
+    
+    function cancelSubmit()    {
+        window.location="{{url_for('.index')}}"; 
+    }
+    
+    function checkPost() {
+       
+    	  var image=document.getElementById('filebrowse').value;
+    	  if (image==""){
+    	  	alert("请选择引导图片！");
+    	  	return false;
+    	  }
+    	  
+    	  var title=document.getElementById('title').value;
+    	  if (title==""){
+    	  	alert("标题不能为空！");
+    	  	return false;
+    	  }
+    	  
+    	  var post=UE.getEditor('editor').getContent();
+    	  if (post==""){
+    	  	alert("请输入文章正文！");
+    	  	return false;
+    	  }
+    }
+
+    function isFocus(e){
+        alert(UE.getEditor('editor').isFocus());
+        UE.dom.domUtils.preventDefault(e)
+    }
+    function setblur(e){
+        UE.getEditor('editor').blur();
+        UE.dom.domUtils.preventDefault(e)
+    }
+    function insertHtml() {
+        var value = prompt('插入html代码', '');
+        UE.getEditor('editor').execCommand('insertHtml', value)
+    }
+    function createEditor() {
+        enableBtn();
+        UE.getEditor('editor');
+    }
+    function getAllHtml() {
+        alert(UE.getEditor('editor').getAllHtml())
+    }
+    function getContent() {
+        var arr = [];
+        arr.push("使用editor.getContent()方法可以获得编辑器的内容");
+        arr.push("内容为：");
+        arr.push(UE.getEditor('editor').getContent());
+        //alert(arr.join("\n"));
+    }
+    function getPlainTxt() {
+        var arr = [];
+        arr.push("使用editor.getPlainTxt()方法可以获得编辑器的带格式的纯文本内容");
+        arr.push("内容为：");
+        arr.push(UE.getEditor('editor').getPlainTxt());
+        alert(arr.join('\n'))
+    }
+    function setContent(isAppendTo) {
+        var arr = [];
+        arr.push("使用editor.setContent('欢迎使用ueditor')方法可以设置编辑器的内容");
+        UE.getEditor('editor').setContent('欢迎使用ueditor', isAppendTo);
+        alert(arr.join("\n"));
+    }
+    function setDisabled() {
+        UE.getEditor('editor').setDisabled('fullscreen');
+        disableBtn("enable");
+    }
+
+    function setEnabled() {
+        UE.getEditor('editor').setEnabled();
+        enableBtn();
+    }
+
+    function getText() {
+        //当你点击按钮时编辑区域已经失去了焦点，如果直接用getText将不会得到内容，所以要在选回来，然后取得内容
+        var range = UE.getEditor('editor').selection.getRange();
+        range.select();
+        var txt = UE.getEditor('editor').selection.getText();
+        alert(txt)
+    }
+
+    function getContentTxt() {
+        var arr = [];
+        arr.push("使用editor.getContentTxt()方法可以获得编辑器的纯文本内容");
+        arr.push("编辑器的纯文本内容为：");
+        arr.push(UE.getEditor('editor').getContentTxt());
+        alert(arr.join("\n"));
+    }
+    function hasContent() {
+        var arr = [];
+        arr.push("使用editor.hasContents()方法判断编辑器里是否有内容");
+        arr.push("判断结果为：");
+        arr.push(UE.getEditor('editor').hasContents());
+        alert(arr.join("\n"));
+    }
+    function setFocus() {
+        UE.getEditor('editor').focus();
+    }
+    function deleteEditor() {
+        disableBtn();
+        UE.getEditor('editor').destroy();
+    }
+    function disableBtn(str) {
+        var div = document.getElementById('btns');
+        var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
+        for (var i = 0, btn; btn = btns[i++];) {
+            if (btn.id == str) {
+                UE.dom.domUtils.removeAttributes(btn, ["disabled"]);
+            } else {
+                btn.setAttribute("disabled", "true");
+            }
+        }
+    }
+    function enableBtn() {
+        var div = document.getElementById('btns');
+        var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
+        for (var i = 0, btn; btn = btns[i++];) {
+            UE.dom.domUtils.removeAttributes(btn, ["disabled"]);
+        }
+    }
+
+    function getLocalData () {
+        alert(UE.getEditor('editor').execCommand( "getlocaldata" ));
+    }
+
+    function clearLocalData () {
+        UE.getEditor('editor').execCommand( "clearlocaldata" );
+        alert("已清空草稿箱")
+    }
+</script>
+<script>
+	function initradio(rName,idx)
+		{
+     var rObj = document.getElementsByClassName(rName);
+      for(var i = 0;i < rObj.length;i++)
+      {
+      	  if(i==idx)
+      	  {
+            rObj[idx].checked =  'checked';
+            break;
+          }
+      }
+     }
+     
+	$(document).ready(function(){
+		$("#group").click(function(){
+			   selectIndex=document.getElementById('group').selectedIndex;
+			   if(selectIndex==0)
+			   {
+			       $("#tectags").show();
+			       $("#lifetags").hide();
+			       initradio('tectag',0);	
+			   }
+			   else if(selectIndex==1)
+			   {
+			      $("#tectags").hide();
+			      $("#lifetags").show();
+			      initradio('lifetag',0);	
+			   }
+			   
+			   
+			});
+		});
+		
+		
+</script>
+<style>
+	.tags{
+		display:inline;
+	}
+	.tags input{
+		margin-left:2em;
+	}
+	
+</style>
+</head>
+{% include '_counts.html' %}
+<body>
+<header class="header">
+<nav class="navbar navbar-default">
+{% include '_header.html' %}
+</nav>
+</header>
+<div class="container">
+	<div class="row">
+		<div class="col col-md-8">
+			 <form action="{{url_for("main.newpost")}}" method="post" onsubmit=" return checkPost();" role="form" enctype="multipart/form-data">
+        <div class="form-group">
+           <label>引导图片:</label>
+           <input type="file" id="filebrowse" name="file">
+        </div>  
+        <div class="form-group">
+           <label>文章标题:</label>
+           <br>
+           <select id="group" name="group"> 
+           	{% for group in groups %}
+        	 	<option>{{group.group_name}}</option>
+            {% endfor %}
+        	 	</select>
+           <input type="text" name="title" id="title" style="width: 80%;">
+        </div>  
+        <div class="form-group">
+           <label>文章内容:</label>
+    	     <script id="editor" type="text/plain" style="width:65em;height:50em;" name="myContent"></script>
+        </div>  
+        <br>
+    	  <div class="tags_container">
+           <label>文章标签:</label>
+           <br>
+           <div id="tectags"> 
+           	 {% for tag in tectags %}
+           	  <input type="radio" class="tectag" name="tag" value="{{tag.tag_name}}">{{tag.tag_name}}&nbsp;&nbsp;
+              {% endfor %}
+            </div>
+            <div id="lifetags" style="display:None;">
+             {% for tag in lifetags %}
+           	  <input type="radio" class="lifetag" name="tag" value="{{tag.tag_name}}">{{tag.tag_name}}&nbsp;&nbsp;
+               {% endfor %}
+           </div>
+           <script>
+           	initradio('tectag',0);	
+           	</script>
+        </div>  
+        <br><br>   
+        <div style="text-align: center;">
+           <input class="btn btn-primary" type="submit" name="submit" value="发表文章" style="width:10em;">
+           <input class="btn btn-warning" type="button" name="button" value="取消" 
+           style="width:10em;margin-left: 3em;" onClick="cancelSubmit()">
+        </div>	 
+        </form>
+		</div>
+	</div>
+</div>
+<footer class="footer">
+<div class="container">
+<p>Copyright &copy; 2016.Company name All rights reserved.<a target="_blank" href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a></p>
+</div>
+<div id="gotop"><a class="gotop"></a></div>
+</footer>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/jquery.ias.js"></script>
+<script src="/static/js/scripts.js"></script>
+</body>
+</html>

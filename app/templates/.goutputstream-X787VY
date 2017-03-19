@@ -1,0 +1,117 @@
+
+{% extends "base2.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}CoderNest - 我的文章{% endblock %}
+
+{% block pagebottom %}
+<div class="container">
+    {% for post in posts %}
+    <div class="row">
+      <div class="col col-md-2"></div>
+        <div class="col col-md-8 post-bload">
+          <table class="table">
+             <thread>
+               <tr>
+                 <th>
+                 <div style="display:block;">
+                 <div style="font-size: 200%;">
+                    {{post.title}}
+                 </div>
+                   <div style="margin-top: 1ex;">
+                     <div class="col col-md-2">
+                      <a href="{{ url_for('.user', username=post.author.username) }}">
+                      <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=25) }}">
+                      </a>   
+                      <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>
+			   	      </div>
+			   	      <div class="col col-md-8">
+                     </div>
+			   	      <div class="col col-md-2">
+                      <a href="" >编辑</a>
+			   	       <a>删除</a>
+                     </div>    
+			   	     
+			   	    </div> 
+                  </div>
+                 </div>
+                 </th>
+               </tr>
+             </thread>
+             <tbody>
+                <tr>
+                  <td>
+                   {% if post.body_html %}
+     	  		   	  {{ post.body_html | safe }}
+     	             {% else %}
+                    {{ post.body }}
+                   {% endif %}                 
+                  </td>
+                </tr>
+             </tbody>
+          </table>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 2em;">
+      <div class="col col-md-2"></div>
+      <div class="col col-md-8 post-bload">
+        <table class="table">
+          <thread>
+               <tr>
+                 <th>
+                 <div style="display:block;">
+                 <div style="font-size: 120%;">
+                    查看评论
+                  </div>
+                 </div>
+                 </th>
+               </tr>
+             </thread>
+             <tbody>
+                <tr>
+                  <td>
+                  {% include '_comments.html' %}
+                   {% if pagination %}
+                     <div class="pagination">
+                      {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}
+                     </div>
+                    {% endif %}            
+                  </td>
+                </tr>
+             </tbody>
+              <thread>
+               <tr>
+                 <th>
+                 <div style="display:block;">
+                 <div style="font-size: 120%;">
+                    发表评论
+                  </div>
+                 </div>
+                 </th>
+               </tr>
+             </thread>
+             <tbody>
+                <tr>
+                  <td>
+                  <div class="row">
+                    <div class="col-md-8" style="display: inline-block;">
+                      <div  class="comment-form">
+                      <h6>评论内容:</h6>
+                      <form action="{{url_for('.post',id=post.id)}}" method="post">
+                      <textarea name="comment-body"></textarea>
+                      <br/>
+                      <input type="submit" value="提交"/>
+                      </form>
+                      </div>
+                    </div>
+						</div>     
+                  </td>
+                </tr>
+             </tbody>
+        </table>    
+      </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
