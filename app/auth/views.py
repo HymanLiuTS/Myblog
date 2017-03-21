@@ -1,5 +1,5 @@
 #!_*_ coding:utf-8 _*_
-from flask import render_template,request,redirect,url_for,flash
+from flask import render_template,request,redirect,url_for,flash,session
 from flask_login import login_user,logout_user,login_required,current_user
 from . import auth
 from .forms import LoginForm,RegistrationForm
@@ -16,13 +16,16 @@ def login():
     form=LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
+        if user.confirmed == False:
+            session['username']=user.username
+            return redirect(url_for('auth.unconfirmed'))
         if user is not None and user.verify_password(form.password.data):
             #通过flask_login来管理登录的用户,login_user为其一个接口,用来登录
             #用户,第二个参数是一个布尔量,为True的话记住当前用户存到cookies中
             #重启浏览器后不用再重复输入用户名
             login_user(user,form.remeber_me.data)
             return redirect(request.args.get('next') or url_for('main.index'))
-        #flash('用户名或密码错误!')
+        flash('用户名或密码错误!')
     return render_template('auth/login.html',form=form)
 
 @auth.route('/logout')
@@ -31,7 +34,7 @@ def logout():
     登出控制,调用flask_login的logout_user()接口.
     """
     logout_user()
-    flash('退出登录成功.')
+    #flash('退出登录成功.')
     return redirect(url_for('main.index'))
 
 
@@ -39,7 +42,7 @@ def logout():
 def register():
     form=RegistrationForm()
     if form.validate_on_submit():
-        user = User(email=form.email.data,username=form.username.data,password=form.password.data,confirmed=True)
+        user = User(email=form.email.data,username=form.username.data,password=form.password.data)
         db.session.add(user)
         db.session.commit()
         #生成令牌
@@ -70,9 +73,9 @@ def before_request():
 
 @auth.route('/unconfirmed')
 def unconfirmed():
-    if current_user.is_anonymous or current_user.confirmed:
-        return redirect(url_for('main.index'))
-    return render_template('auth/unconfirmed.html',name=current_user.username)
+    #if current_user.is_anonymous or current_user.confirmed:
+        #return redirect(url_for('main.index'))
+    return render_template('auth/unconfirmed.html',name=session['username'])
 
 @auth.route('/confirm')
 @login_required

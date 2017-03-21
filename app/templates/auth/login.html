@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
 
-<title>用户登陆</title>
+<title>用户登录</title>
 </head>
 <style type="text/css">
   .line-boder{
@@ -37,6 +37,11 @@
         {{ wtf.quick_form(form) }}
     	</div>
     	<div class="line-boder">
+    		{% for message in get_flashed_messages() %}
+    		<p class="alert alert-warning">
+    		   {{message}}
+    		</p>
+    		{% endfor %}
     		 还没有账号？点击进行<a href="{{ url_for('auth.register') }}"> <b>注册 </b></a>
     	</div>	   
     </div>

@@ -1,6 +1,6 @@
 Dear {{ user.username }},
 
-Welcome to TecnologyDreamer!
+Welcome to ConeNest!
 
 To confirm your account please click on the following link:
 

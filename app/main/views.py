@@ -3,7 +3,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
 from datetime import datetime
-from flask import render_template,session,redirect,url_for,current_app,flash,request,make_response,send_from_directory
+from flask import render_template,session,redirect,url_for,current_app,flash,request,make_response,send_from_directory,abort
 from decorators import admin_required,permission_required
 from . import main
 from .forms import NameForm,EditProfileForm,EditProfileAdminForm,PostForm,CommentForm
