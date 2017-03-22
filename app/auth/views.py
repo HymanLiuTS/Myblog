@@ -48,8 +48,8 @@ def register():
         #生成令牌
         token=user.generate_confirmation_token()
         send_email(user.email,'Confirm your account','auth/email/confirm',user=user,token=token)
-        flash('确认邮件已经发送至您的邮箱，请先进行确认')
-        return redirect(request.args.get('next') or url_for('auth.login'))
+        login_user(user,False)
+        return redirect(request.args.get('next') or url_for('auth.unconfirmed'))
     return render_template('auth/register.html',form=form)
 
 @auth.route('/confirm/<token>')
