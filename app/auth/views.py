@@ -16,8 +16,8 @@ def login():
     form=LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user.confirmed == False:
-            session['username']=user.username
+        if user is not None and user.confirmed == False:
+            login_user(user,False)
             return redirect(url_for('auth.unconfirmed'))
         if user is not None and user.verify_password(form.password.data):
             #通过flask_login来管理登录的用户,login_user为其一个接口,用来登录
@@ -48,8 +48,8 @@ def register():
         #生成令牌
         token=user.generate_confirmation_token()
         send_email(user.email,'Confirm your account','auth/email/confirm',user=user,token=token)
-        #flash('A confirmation email has been sent to you by email')
-        return redirect(request.args.get('next') or url_for('main.index'))
+        flash('确认邮件已经发送至您的邮箱，请先进行确认')
+        return redirect(request.args.get('next') or url_for('auth.login'))
     return render_template('auth/register.html',form=form)
 
 @auth.route('/confirm/<token>')
@@ -73,15 +73,15 @@ def before_request():
 
 @auth.route('/unconfirmed')
 def unconfirmed():
-    #if current_user.is_anonymous or current_user.confirmed:
-        #return redirect(url_for('main.index'))
-    return render_template('auth/unconfirmed.html',name=session['username'])
+    if current_user.is_anonymous or current_user.confirmed:
+        return redirect(url_for('main.index'))
+    return render_template('auth/unconfirmed.html',name=current_user.username)
 
 @auth.route('/confirm')
 @login_required
 def resend_confirmation():
     token=current_user.generate_confirmation_token()
     send_email(current_user.email,'Confirm your Account','auth/email/confirm',user=current_user,token=token)
-    flash('A new confirmation email has been sent to you by email')
+    flash('新的确认邮件已经发送至您的邮箱，请先进行确认！')
     return redirect(url_for('main.index'))
 
