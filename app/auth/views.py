@@ -1,5 +1,5 @@
 #!_*_ coding:utf-8 _*_
-from flask import render_template,request,redirect,url_for,flash,session
+from flask import render_template,request,redirect,url_for,flash,session,abort
 from flask_login import login_user,logout_user,login_required,current_user
 from . import auth
 from .forms import LoginForm,RegistrationForm
@@ -63,7 +63,7 @@ def confirm(token):
         flash('确认链接已经失效。')
     return redirect(url_for('auth.login'))
 
-@auth.before_app_request
+#@auth.before_app_request
 def before_request():
     if current_user.is_authenticated:
         current_user.ping()
@@ -81,6 +81,6 @@ def unconfirmed():
 @login_required
 def resend_confirmation():
     token=current_user.generate_confirmation_token()
-    send_email(current_user.email,'Confirm your Account','auth/email/confirm',user=current_user,token=token)
-    return redirect(url_for('main.unconfirmed'))
+    send_email(current_user.email,'Confirm your account','auth/email/confirm',user=current_user,token=token)
+    return redirect(url_for('auth.unconfirmed'))
 
