@@ -56,11 +56,13 @@ def register():
 @login_required
 def confirm(token):
     if current_user.confirmed:
+        flash('您已经确认过账户，无需再确认。')
         return redirect(url_for('main.index'))
     if current_user.confirm(token):
-        flash('您已经确认过账户，无需再确认。')
+        flash('账户确认完成。')
     else:
         flash('确认链接已经失效。')
+        return render_template('unconfirmed2.html',)
     return redirect(url_for('auth.login'))
 
 #@auth.before_app_request
