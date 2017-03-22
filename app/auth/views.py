@@ -58,10 +58,10 @@ def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('main.index'))
     if current_user.confirm(token):
-        flash('You have confirmed your account.Thanks!')
+        flash('您已经确认过账户，无需再确认。')
     else:
-        flash('The confirmation link is invalid or has expired.')
-    return redirect(url_for('main.index'))
+        flash('确认链接已经失效。')
+    return redirect(url_for('auth.login'))
 
 @auth.before_app_request
 def before_request():
@@ -82,6 +82,5 @@ def unconfirmed():
 def resend_confirmation():
     token=current_user.generate_confirmation_token()
     send_email(current_user.email,'Confirm your Account','auth/email/confirm',user=current_user,token=token)
-    flash('新的确认邮件已经发送至您的邮箱，请先进行确认！')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.unconfirmed'))
 
