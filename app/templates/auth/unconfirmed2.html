@@ -80,7 +80,7 @@
 	<h2>您的确认链接已经失效，请点击下面的提示信息重新发送。</h2>
 </div>
 <div >
-	<h2>重新发送确认邮件？<a href="{{ url_for("auth.resend_confirmation")}}">点击这里</a></h2>
+	<h2>重新发送确认邮件？<a href="{{ url_for('auth.resend_confirmation',id=user.id) }}">点击这里</a></h2>
 </div>
 </div>
 </div>
