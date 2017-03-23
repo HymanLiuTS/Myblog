@@ -56,7 +56,7 @@ def confirm(id,token):
     user=User.query.get_or_404(id)
     if user == None:
         flash('用户尚未注册！')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.register'))
     if user.confirmed:
         flash('您已经确认过账户，无需再确认。')
         return redirect(url_for('auth.login'))
@@ -81,7 +81,7 @@ def unconfirmed(id):
     user=User.query.get_or_404(id)
     if user == None:
         flash('用户尚未注册！')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.register'))
     if  user.confirmed:
         return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html',name=user.username)
@@ -91,7 +91,7 @@ def resend_confirmation(id):
     user=User.query.get_or_404(id)
     if user == None:
         flash('用户尚未注册！')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.register'))
     token=user.generate_confirmation_token()
     send_email(user.email,'Confirm your account','auth/email/confirm',user=user,token=token)
     return redirect(url_for('auth.unconfirmed',id=id))
