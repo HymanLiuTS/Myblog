@@ -1,6 +1,6 @@
 Dear {{ user.username }},
 
-Welcome to ConeNest!
+Welcome to CodeNest!
 
 To confirm your account please click on the following link:
 
