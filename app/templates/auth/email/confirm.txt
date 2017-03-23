@@ -4,7 +4,7 @@ Welcome to CodeNest!
 
 To confirm your account please click on the following link:
 
-{{ url_for('auth.confirm',token=token,_external=True) }}
+{{ url_for('auth.confirm',id=user.id,token=token,_external=True) }}
 
 Sincerrely.
 
