@@ -30,10 +30,16 @@
 	<div class="row">
 		<div class="col col-md-4 "></div>
     <div class="col col-md-4 " >
+	{% for message in get_flashed_messages() %}
+        <p class="alert alert-warning">
+    	   {{message}}
+    	</p>
+    	{% endfor %}
     	<div class="line-boder">
     		 <h2>用户注册</h2>
         {{ wtf.quick_form(form) }}
-    	</div>	 
+    	</div>
+	 
     	<div style="float:right;">
         已经有账号？点击进行<a href="{{ url_for('auth.login') }}"> <b>登录 </b></a>
     	  </div> 
@@ -41,4 +47,4 @@
 	</div>
 </div>
 </body>
-</html>
+</html>
