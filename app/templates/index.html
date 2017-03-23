@@ -1,35 +1,119 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>代码窝-一个草根程序员的技术生活</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/static/css/nprogress.css">
+<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+<link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
+<link rel="apple-touch-icon-precomposed" href="/static/images/icon.png">
+<link rel="shortcut icon" href="/static/images/favicon.ico">
+<script src="/static/js/jquery-2.1.4.min.js"></script>
+<script src="/static/js/nprogress.js"></script>
+<script src="/static/js/jquery.lazyload.min.js"></script>
 
-{% block title %}主页{% endblock %}
+</head>
+{% include '_counts.html' %}
+<body>
+<header class="header">
+<nav class="navbar navbar-default" id="navbar">
+{% include '_header.html' %}
+</nav>
+</header>
+<section class="container">
+<div class="content-wrap">
+<div class="content">
+  <div id="focusslide" class="carousel slide" data-ride="carousel">
+	<ol class="carousel-indicators">
+	  <li data-target="#focusslide" data-slide-to="0" class="active"></li>
+	  <li data-target="#focusslide" data-slide-to="1"></li>
+	</ol>
+	<div class="carousel-inner" role="listbox">
+	  <div class="item active">
+	  <a href="#" target="_blank" title="Hyman's网络博客" >
+	  <img width="800" height="200" src="/static/images/lunbo1.jpg" alt="Hyman's网络博客" class="img-responsive"></a>
+	  </div>
+	  <div class="item">
+	  <a href="#" target="_blank" title="Hyman's网络博客" >
+	  <img width="800" height="200" src="/static/images/lunbo2.jpg" alt="Hyman's网络博客" class="img-responsive"></a>
+	  </div>
+	</div>
+	<a class="left carousel-control" href="#focusslide" role="button" data-slide="prev" rel="nofollow"> <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> <span class="sr-only">上一个</span> </a> <a class="right carousel-control" href="#focusslide" role="button" data-slide="next" rel="nofollow"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> <span class="sr-only">下一个</span> </a> </div>
+  {% if recommend_post != None %}
+  <article class="excerpt-minic excerpt-minic-index">
+		<h2><span class="red">【推荐】</span><a target="_blank" href="{{url_for('.post',id=recommend_post.id)}}" title="{{ recommend_post.title }}" >{{ recommend_post.title }}</a>
+		</h2>
+		<p class="note"><a href="{{url_for('.post',id=recommend_post.id)}}">{{ recommend_post.body }}</a></p>
+	</article>
+	 {% endif %}
+  <div class="title">
+	<h3>最新发布</h3>
+  </div>
+  <div>
+  	{% include '_postslist.html' %}
+  </div>
+</div>
+</div>
+<aside class="sidebar">
+<div class="fixed">
+  <div class="widget widget-tabs">
+	<ul class="nav nav-tabs" role="tablist">
+	  <li role="presentation" class="active"><a href="#notice" aria-controls="notice" role="tab" data-toggle="tab" >统计信息</a></li>
+	  <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab" >联系站长</a></li>
+	</ul>
+	<div class="tab-content">
+	  <div role="tabpanel" class="tab-pane contact active" id="notice">
+		  <h3>日志总数:
+			  {{ post_counts }} 篇
+		  </h3>
+	    <h3>网站运行:
+		  <span id="sitetime">{{days}} 天 </span></h3>
+		  <h3>访问量:
+		  <span>{{vistors}} 人次</span></h3>
+	  </div>
+		<div role="tabpanel" class="tab-pane contact" id="contact">
+		  <h3>Email: 
+			  <a href="mailto:hyman@codenest.cn" target="_blank" rel="nofollow" data-toggle="tooltip" data-placement="bottom" title=""  data-original-title="hyman@codenest.cn"> hyman@codenest.cn</a>
+		  </h3>
+		  	<h3>CSDN: 
+		  <a href="http://blog.csdn.net/hyman_c" style="font-size:0.8em;color:blue;text-decoration:underline;" target="_blank" data-toggle="tooltip" rel="nofollow" data-placement="bottom" title="http://blog.csdn.net/hyman_c"  data-original-title="#"> http://blog.csdn.net/hyman_c</a></h3>
+		  	 <h3>Github: 
+		  <a href="https://github.com/HymanLiuTS" style="font-size:0.8em;color:blue;text-decoration:underline;" target="_blank" data-toggle="tooltip" rel="nofollow" data-placement="bottom" title="https://github.com/HymanLiuTS"  data-original-title="#"> https://github.com/HymanLiuTS</a></h3>
+	  </div>
+	</div>
+  </div>
+  <div class="widget widget_search">
+	<form class="navbar-form" action="{{url_for('.search')}}" method="GET">
+	  <div class="input-group">
+		<input type="text" name="q" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">
+		<span class="input-group-btn">
+		<button class="btn btn-default btn-search" name="search" type="submit">搜索</button>
+		</span> </div>
+	</form>
+  </div>
+</div>
+<div class="widget widget_hot">
+	 {% include '_hotarticles.html' %}
+</div>
 
-{% block page_content %}
-<div class="page-header">
-    <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h1>
+                           
+ <div>
+  {% include '_advert.html'%}
 </div>
-<div>
-    {% if current_user.can(Permission.WRITE_ARTICLES) %}
-    {{ wtf.quick_form(form) }}
-    {% endif %}
-</div>
-<div class="post-tabs">
-    <ul class="nav nav-tabs">
-        <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">所有</a></li>
-        {% if current_user.is_authenticated %}
-        <li{% if show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_followed') }}">我关注的人</a></li>
-        {% endif %}
-    </ul>
-    {% include '_posts.html' %}
-</div>
-{% if pagination %}
-<div class="pagination">
-    {{ macros.pagination_widget(pagination, '.index') }}
-</div>
-{% endif %}
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-{{ pagedown.include_pagedown() }}
-{% endblock %}
+</aside>
+</section>
+<footer class="footer">
+{% include '_footer.html' %}
+</footer>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/jquery.ias.js"></script>
+<script src="/static/js/scripts.js"></script>
+</body>
+</html>

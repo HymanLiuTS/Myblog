@@ -37,7 +37,7 @@ def index():
     #最新评论文章
     recent_comment_posts=Post.query.filter(Post.last_comment_time!=None).order_by(Post.last_comment_time.desc()).limit(8)
     recommend_post=Post.query.filter_by(recommend=1).order_by(Post.last_recommend_time.desc()).first()
-    return render_template('index2.html',posts=posts,pagination=pagination,
+    return render_template('index.html',posts=posts,pagination=pagination,
                            post_counts=post_counts,recent_comment_posts=recent_comment_posts,
                            recommend_post=recommend_post,days=days,vistors=vistors,running_info=running_info)
 
@@ -261,7 +261,7 @@ def post(id):
     vistors = running_info.vistors
     days = (datetime.utcnow() - running_info.timestamp).days
 
-    return render_template('post2.html', post=post,
+    return render_template('post.html', post=post,
                            comments=comments, pagination=pagination,
     post_counts = post_counts, recent_comment_posts = recent_comment_posts,
                            recmomend_posts=recmomend_posts,vistors=vistors,days=days)
