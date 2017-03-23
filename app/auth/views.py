@@ -64,7 +64,7 @@ def confirm(id,token):
         flash('账户确认完成。')
     else:
         flash('确认链接已经失效。')
-        return render_template('unconfirmed2.html',user=user)
+        return render_template('auth/unconfirmed2.html',user=user)
     return redirect(url_for('auth.login'))
 
 #@auth.before_app_request
