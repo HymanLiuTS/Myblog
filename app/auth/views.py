@@ -84,7 +84,7 @@ def unconfirmed(id):
         return redirect(url_for('auth.register'))
     if  user.confirmed:
         return redirect(url_for('main.index'))
-    return render_template('auth/unconfirmed.html',name=user.username)
+    return render_template('auth/unconfirmed.html',user=user)
 
 @auth.route('/confirm/<int:id>')
 def resend_confirmation(id):
