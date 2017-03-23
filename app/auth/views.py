@@ -17,8 +17,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.confirmed == False:
-            login_user(user,False)
-            return redirect(url_for('auth.unconfirmed'))
+            return redirect(url_for('auth.unconfirmed',id=user.id))
         if user is not None and user.verify_password(form.password.data):
             #通过flask_login来管理登录的用户,login_user为其一个接口,用来登录
             #用户,第二个参数是一个布尔量,为True的话记住当前用户存到cookies中
@@ -46,23 +45,26 @@ def register():
         db.session.add(user)
         db.session.commit()
         #生成令牌
+        user=User.query.filter_by(email=form.email.data).first()
         token=user.generate_confirmation_token()
         send_email(user.email,'Confirm your account','auth/email/confirm',user=user,token=token)
-        login_user(user,False)
         return redirect(request.args.get('next') or url_for('auth.unconfirmed'))
     return render_template('auth/register.html',form=form)
 
-@auth.route('/confirm/<token>')
-@login_required
-def confirm(token):
-    if current_user.confirmed:
+@auth.route('/confirm/<int:id>/<token>')
+def confirm(id,token):
+    user=User.query.get_or_404(id)
+    if user == None:
+        flash('用户尚未注册！')
+        return redirect(url_for('auth.login'))
+    if user.confirmed:
         flash('您已经确认过账户，无需再确认。')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('auth.login'))
     if current_user.confirm(token):
         flash('账户确认完成。')
     else:
         flash('确认链接已经失效。')
-        return render_template('unconfirmed2.html',)
+        return render_template('unconfirmed2.html',user=user)
     return redirect(url_for('auth.login'))
 
 #@auth.before_app_request
@@ -74,16 +76,23 @@ def confirm(token):
                     return redirect(url_for('auth.unconfirmed'))
 """
 
-@auth.route('/unconfirmed')
-def unconfirmed():
-    if current_user.is_anonymous or current_user.confirmed:
+@auth.route('/unconfirmed/<int:id>')
+def unconfirmed(id):
+    user=User.query.get_or_404(id)
+    if user == None:
+        flash('用户尚未注册！')
+        return redirect(url_for('auth.login'))
+    if  user.confirmed:
         return redirect(url_for('main.index'))
-    return render_template('auth/unconfirmed.html',name=current_user.username)
+    return render_template('auth/unconfirmed.html',name=user.username)
 
-@auth.route('/confirm')
-@login_required
-def resend_confirmation():
-    token=current_user.generate_confirmation_token()
-    send_email(current_user.email,'Confirm your account','auth/email/confirm',user=current_user,token=token)
-    return redirect(url_for('auth.unconfirmed'))
+@auth.route('/confirm/<int:id>')
+def resend_confirmation(id):
+    user=User.query.get_or_404(id)
+    if user == None:
+        flash('用户尚未注册！')
+        return redirect(url_for('auth.login'))
+    token=user.generate_confirmation_token()
+    send_email(user.email,'Confirm your account','auth/email/confirm',user=user,token=token)
+    return redirect(url_for('auth.unconfirmed',id=id))
 
