@@ -60,7 +60,7 @@ def confirm(id,token):
     if user.confirmed:
         flash('您已经确认过账户，无需再确认。')
         return redirect(url_for('auth.login'))
-    if current_user.confirm(token):
+    if user.confirm(token):
         flash('账户确认完成。')
     else:
         flash('确认链接已经失效。')
