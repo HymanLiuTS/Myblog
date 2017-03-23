@@ -48,7 +48,7 @@ def register():
         user=User.query.filter_by(email=form.email.data).first()
         token=user.generate_confirmation_token()
         send_email(user.email,'Confirm your account','auth/email/confirm',user=user,token=token)
-        return redirect(request.args.get('next') or url_for('auth.unconfirmed'))
+        return redirect(request.args.get('next') or url_for('auth.unconfirmed',id=user.id))
     return render_template('auth/register.html',form=form)
 
 @auth.route('/confirm/<int:id>/<token>')
