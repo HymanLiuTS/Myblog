@@ -2,7 +2,7 @@
 from flask import render_template,request,redirect,url_for,flash,session,abort
 from flask_login import login_user,logout_user,login_required,current_user
 from . import auth
-from .forms import LoginForm,RegistrationForm
+from .forms import LoginForm,RegistrationForm,ChangePWForm
 from ..models import User
 from app import db
 from ..email import send_email
@@ -95,4 +95,16 @@ def resend_confirmation(id):
     token=user.generate_confirmation_token()
     send_email(user.email,'Confirm your account','auth/email/confirm',user=user,token=token)
     return redirect(url_for('auth.unconfirmed',id=id))
+
+@auth.route('/changepw/<int:id>',methods=['GET','POST'])
+def change_password(id):
+    user = User.query.get_or_404(id)
+    form=ChangePWForm()
+    if request.method == 'GET':
+        form.email.data=user.email
+    if form.validate_on_submit():
+        user.change_password(form.password.data)
+        logout_user()
+        return redirect(request.args.get('next') or url_for('auth.login'))
+    return render_template('auth/change_password.html',form=form)
 

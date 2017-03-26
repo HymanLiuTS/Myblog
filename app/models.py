@@ -267,6 +267,16 @@ class User(UserMixin,db.Model):
         u = User(id=0,email='695970775@qq.com',username='Anu')
         db.session.add(u)
 
+    def change_password(self,new):
+        """
+        改变用户的密码
+        :param new: 新密码
+        :return:
+        """
+        self.password=new
+        db.session.add(self)
+        db.session.commit
+
 class AnonymousUser(AnonymousUserMixin):
     def can(self,permissions):
         return False
